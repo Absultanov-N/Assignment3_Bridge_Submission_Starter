@@ -39,7 +39,7 @@ This demonstrates that the two hierarchies vary independently. A new shape can u
 
 ### 3.1 Separation of responsibilities
 
-`Circle` contains shape-specific information and delegates rendering:
+`Circle` handles circle-specific data and behavior, while rendering is delegated to the `Renderer` implementation:
 
 ```java
 @Override
@@ -48,34 +48,65 @@ public void draw() {
 }
 ```
 
-The renderer contains rendering-specific behavior.
-
 ### 3.2 Meaningful names
 
-The names identify both roles directly:
-- `Shape` — abstraction;
-- `Renderer` — implementor;
-- `VectorRenderer` / `RasterRenderer` — concrete implementations.
-
-### 3.3 Small, focused classes
-
-`Circle` manages circle data and delegates drawing. `VectorRenderer` and `RasterRenderer` contain rendering behavior for their respective implementations.
-
-### 3.4 No duplicated logic between shapes
-
-Shapes do not contain vector/raster rendering algorithms. They delegate to `Renderer`.
-
-### 3.5 Extensibility of the implementation side
-
-A new concrete renderer can implement `Renderer` without changing the abstraction classes:
+Names such as `Renderer`, `renderCircle`, `renderSquare`, `VectorRenderer`, and `RasterRenderer` clearly communicate the responsibilities of the classes and methods:
 
 ```java
-class NewRenderer implements Renderer {
-    // implement renderCircle() and renderSquare()
+public interface Renderer {
+    void renderCircle(double radius);
+    void renderSquare(double side);
 }
 ```
 
-Existing `Shape`, `Circle`, and `Square` classes remain unchanged.
+### 3.3 Small, focused classes
+
+`Circle` is focused on circle-specific data and behavior. It delegates rendering instead of containing vector or raster rendering algorithms:
+
+```java
+public class Circle extends Shape {
+    private final double radius;
+
+    public Circle(double radius, Renderer renderer) {
+        super(renderer);
+        this.radius = radius;
+    }
+
+    @Override
+    public void draw() {
+        renderer.renderCircle(radius);
+    }
+}
+```
+
+### 3.4 No duplicated rendering logic
+
+`Circle` does not contain separate vector and raster rendering implementations. Rendering is delegated to the `Renderer` implementations:
+
+```java
+@Override
+public void draw() {
+    renderer.renderCircle(radius);
+}
+```
+
+### 3.5 Extensibility of the implementation side
+
+A new renderer can implement the existing `Renderer` interface without modifying `Shape`, `Circle`, or `Square`:
+
+```java
+class NewRenderer implements Renderer {
+    @Override
+    public void renderCircle(double radius) {
+        // new implementation
+    }
+
+    @Override
+    public void renderSquare(double side) {
+        // new implementation
+    }
+}
+```
 
 ## 4. Conclusion and Trade-offs
 
@@ -85,4 +116,4 @@ The trade-off is separation of abstraction and implementation. The client can co
 
 ## 5. GitHub Repository
 
-Add the final GitHub repository URL here after publication.
+https://github.com/Absultanov-N/Assignment3_Bridge_Submission_Starter.git
