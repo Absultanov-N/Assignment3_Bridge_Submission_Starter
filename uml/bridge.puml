@@ -1,0 +1,43 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+abstract class Shape {
+    # renderer: Renderer
+    + setRenderer(renderer: Renderer)
+    + draw()
+}
+
+class Circle {
+    - radius: double
+    + draw()
+}
+
+class Square {
+    - side: double
+    + draw()
+}
+
+interface Renderer {
+    + renderCircle(radius: double)
+    + renderSquare(side: double)
+}
+
+class VectorRenderer {
+    + renderCircle(radius: double)
+    + renderSquare(side: double)
+}
+
+class RasterRenderer {
+    + renderCircle(radius: double)
+    + renderSquare(side: double)
+}
+
+Shape <|-- Circle
+Shape <|-- Square
+
+Renderer <|.. VectorRenderer
+Renderer <|.. RasterRenderer
+
+Shape *-- Renderer : composition / bridge
+
+@enduml
